@@ -52,5 +52,4 @@ template<typename AnyType> void sortArrayReverse(AnyType array[], size_t sizeOfA
 	ArduinoSort::insertionSort(array, sizeOfArray, true, largerThan);
 }
 
-
 #endif
