@@ -1,3 +1,38 @@
+// ----------------------------------- INCLUDES -----------------------------------
+#include <math.h>       // Conversion equation from resistance to %
+#include "ArduinoSort.h"
+
+// --- INCLUINDO O HEADER ---
+#include "classes.h"
+#include "connection.h"
+
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <ArduinoJson.h>
+// --------------------------------------------------------------------------------
+
+// ----------------------------------- DEFINES ------------------------------------
+//TENSÃO DE REFERENCIA DO ADC
+#define DEFAULT_VREF    1086
+
+// Setting up format for reading 3 soil sensors
+#define NUM_READS           10                    /* Number of sensor reads for filtering  */
+#define uS_TO_S_FACTOR      1000000               /* Conversion factor from micro seconds to seconds */
+#define S_TO_MIN_FACTOR     60 * uS_TO_S_FACTOR   /* Conversion factor from seconds to minutes */
+#define SLEEP_PERIOD_VALUE  30                    /* Time ESP32 will go to sleep (in seconds) */
+// --------------------------------------------------------------------------------
+
+//VERIFICAR COM HITALO
+RTC_DATA_ATTR int bootCount = 0;
+
+//VERIFICAR COM HITALO
+const long knownResistor = 4700;  // Constant value of known resistor in Ohms
+
+static const adc_bits_width_t width = ADC_WIDTH_BIT_12;
+static const adc_atten_t atten = ADC_ATTEN_DB_11;
+static const adc_unit_t unit = ADC_UNIT_1;
+esp_adc_cal_characteristics_t adc_cal;
+
 unsigned long lastSend = 0;
 int pinRele = 0;
 
@@ -18,7 +53,7 @@ void setup() {
   pinMode(32, INPUT);
   pinMode(35, INPUT);
   pinMode(34, INPUT);
-
+  
   beginClient();
   imprimirInformacoesWifiEMQTT();
 }
@@ -46,7 +81,7 @@ void loop() {
         
         //CRIA CONEXAO MQTT
         boolean isMQTTConnected = reconnectMQTT(&client);
-
+        
         //VERIFICA SE HA CONEXAO COM O SERVIDOR MQTT
         if (isMQTTConnected) {
           Serial.println("Envio das informações para os servidores...");

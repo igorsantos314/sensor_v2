@@ -109,7 +109,7 @@ float Statistic::average() const
     return _sum / _cnt;
 }
 
-// Population standard deviation = s = sqrt [ S ( Xi - µ )2 / N ]
+// Population standard deviation = s = sqrt [ S ( Xi - ï¿½ )2 / N ]
 // http://www.suite101.com/content/how-is-standard-deviation-used-a99084
 float Statistic::variance() const
 {
